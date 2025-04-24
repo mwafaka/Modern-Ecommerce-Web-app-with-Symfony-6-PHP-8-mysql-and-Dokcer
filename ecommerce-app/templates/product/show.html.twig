@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Product
+{% endblock %}
+
+{% block body %}
+	<div class="max-w-4xl mx-auto p-8">
+		<h1 class="text-4xl font-bold text-gray-800 mb-6">Product Details</h1>
+
+		<div class="bg-white shadow-lg rounded-lg p-6">
+			<table class="min-w-full text-left">
+				<tbody class="text-gray-700">
+					<tr class="border-b border-gray-200">
+						<th class="py-2 px-4 font-semibold">ID</th>
+						<td class="py-2 px-4">{{ product.id }}</td>
+					</tr>
+					<tr class="border-b border-gray-200">
+						<th class="py-2 px-4 font-semibold">Title</th>
+						<td class="py-2 px-4">{{ product.title }}</td>
+					</tr>
+					<tr class="border-b border-gray-200">
+						<th class="py-2 px-4 font-semibold">Description</th>
+						<td class="py-2 px-4">{{ product.description }}</td>
+					</tr>
+					<tr class="border-b border-gray-200">
+						<th class="py-2 px-4 font-semibold">Price</th>
+						<td class="py-2 px-4">${{ product.price }}</td>
+					</tr>
+					<tr class="border-b border-gray-200">
+						<th class="py-2 px-4 font-semibold">Quantity</th>
+						<td class="py-2 px-4">{{ product.quantity }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="mt-6 space-x-4">
+			<a href="{{ path('app_product_index') }}" class="text-blue-600 hover:text-blue-800">Back to List</a>
+			{% if is_granted('ROLE_ADMIN') %}
+				<a href="{{ path('app_product_edit', {'id': product.id}) }}" class="text-yellow-600 hover:text-yellow-800">Edit</a>
+			{% endif %}
+		</div>
+		{% if is_granted('ROLE_ADMIN') %}
+			<div class="mt-4 bg">
+				{{ include('product/_delete_form.html.twig') }}
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Welcome!
+			{% endblock %}
+		</title>
+		<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"> {% block stylesheets %}{% endblock %}
+		</head>
+		<body
+			class="bg-gray-100 text-gray-800">
+
+			<!-- Navigation -->
+			<nav class="bg-white shadow-md">
+				<div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+					<div class="flex space-x-4">
+						<a href="{{ path('app_product_index') }}" class="text-xl font-bold text-gray-800 hover:text-blue-600">Home</a>
+					</div>
+
+					<div class="flex items-center space-x-4">
+						{% if app.user %}
+							<span class="text-sm text-gray-600">Welcome,
+								{{ app.user.email }}</span>
+							<a href="{{ path('app_logout') }}" class="text-gray-800 hover:text-red-600">Logout</a>
+						{% else %}
+							  <a href="{{ path('app_register') }}" class="text-gray-800 hover:text-blue-600">Register</a> 
+							<a href="{{ path('app_login') }}" class="text-gray-800 hover:text-blue-600">Login</a>
+						{% endif %}
+
+						<a href="{{ path('app_cart_index') }}" class="text-gray-800 hover:text-yellow-600">
+							🛒
+							{% if cartCount  is defined and cartCount > 0 %}
+								<span class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+									{{ cartCount }}
+								</span>
+							{% endif %}
+						</a>
+					</div>
+				</div>
+			</nav>
+
+			<!-- Main content -->
+			<main class="py-6"> {% block body %}{% endblock %}
+				</main>
+
+			</body>
+		</html>

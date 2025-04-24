@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+        <h1 class="text-2xl font-semibold text-center text-gray-800 mb-6">Please sign in</h1>
+
+        {% if error %}
+            <div class="bg-red-100 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="bg-blue-100 text-blue-800 px-4 py-3 rounded mb-4 text-sm">
+                You are logged in as <strong>{{ app.user.userIdentifier }}</strong>,
+                <a href="{{ path('app_logout') }}" class="underline text-blue-700 hover:text-blue-900">Logout</a>
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-4">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" value="{{ last_username }}" name="_username" id="username"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-indigo-200"
+                       autocomplete="email" required autofocus>
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" name="_password" id="password"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-indigo-200"
+                       autocomplete="current-password" required>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            {# Uncomment below to enable "Remember me" functionality #}
+            {#
+            <div class="flex items-center">
+                <input id="_remember_me" name="_remember_me" type="checkbox"
+                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <label for="_remember_me" class="ml-2 block text-sm text-gray-900">
+                    Remember me
+                </label>
+            </div>
+            #}
+
+            <button type="submit"
+                    class="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                Sign in
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

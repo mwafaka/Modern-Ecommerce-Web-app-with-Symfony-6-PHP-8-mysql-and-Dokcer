@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Product
+{% endblock %}
+
+{% block body %}
+	<div
+		class="max-w-4xl mx-auto p-8">
+		<!-- Page Title -->
+		<h1 class="text-4xl font-bold text-gray-900 mb-6">Create New Product</h1>
+
+		<!-- Form Container -->
+		<div
+			class="bg-white shadow-lg rounded-lg p-6">
+			<!-- Form included here with button styling -->
+			{{ include('product/_form.html.twig') }}
+		</div>
+
+		<!-- Back to List Link -->
+		<div class="mt-6">
+			<a href="{{ path('app_product_index') }}" class="text-blue-600 hover:text-blue-800">
+				Back to Product List
+			</a>
+		</div>
+	</div>
+{% endblock %}

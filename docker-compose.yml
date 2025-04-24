@@ -1,0 +1,44 @@
+
+
+services:
+  php:
+   container_name: ecommerce_php
+   build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+   volumes:
+      - .:/var/www/html
+   ports:
+      - "9000:9000"
+   depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/conf:/etc/nginx/conf.d
+    ports:
+      - "8080:80"
+    depends_on:
+      - php
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecommerce
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+
+volumes:
+  db_data:
