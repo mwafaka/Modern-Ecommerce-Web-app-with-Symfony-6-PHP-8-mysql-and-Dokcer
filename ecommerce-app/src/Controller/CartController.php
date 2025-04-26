@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\CartItem;
 use App\Service\CartService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,21 +14,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class CartController extends AbstractController
 {
     #[Route('/cart', name: 'app_cart_index')]
-    public function index(CartService $cartService, EntityManagerInterface $em): Response
+    #[IsGranted('ROLE_USER')]
+    public function index(EntityManagerInterface $em): Response
     {
-        $cartItems = [];
-        $total = 0;
+        /** @var User $user */
+        $user = $this->getUser();
+        $cartItems = $user->getCartItems();
 
-        foreach ($cartService->getCart() as $id => $qty) {
-            $product = $em->getRepository(Product::class)->find($id);
-            if ($product) {
-                $cartItems[] = [
-                    'product' => $product,
-                    'quantity' => $qty,
-                    'subtotal' => $qty * $product->getPrice()
-                ];
-                $total += $qty * $product->getPrice();
-            }
+        $total = 0;
+        foreach ($cartItems as $item) {
+            $total += $item->getQuantity() * $item->getPriceAtTime();
         }
 
         return $this->render('cart/index.html.twig', [
@@ -36,14 +32,40 @@ class CartController extends AbstractController
         ]);
     }
 
+
     #[Route('/cart/add/{id}', name: 'app_cart_add')]
     #[IsGranted('ROLE_USER')]
-    public function add(Product $product, CartService $cartService): Response
+    public function add(Product $product, EntityManagerInterface $em): Response
     {
-        $cartService->add($product);
+        /** @var User $user */
+        $user = $this->getUser();
+        if (!$user instanceof \App\Entity\User) {
+            throw new \LogicException('User is not authenticated or wrong user class.');
+        }
+        $cartItem = $em->getRepository(CartItem::class)->findOneBy([
+            'user' => $user,
+            'product' => $product
+        ]);
+
+        if (!$cartItem) {
+            $cartItem = new CartItem();
+            $cartItem->setUser($user);
+            $cartItem->setProduct($product);
+            $cartItem->setQuantity(1);
+            $cartItem->setPriceAtTime($product->getPrice());
+
+            $em->persist($cartItem);
+        } else {
+            $cartItem->setQuantity($cartItem->getQuantity() + 1);
+        }
+
+        $em->flush();
+
         $this->addFlash('success', sprintf('"%s" added to cart.', $product->getTitle()));
+
         return $this->redirectToRoute('app_product_index');
     }
+
 
     #[Route('/cart/remove/{id}', name: 'app_cart_remove')]
     #[IsGranted('ROLE_USER')]

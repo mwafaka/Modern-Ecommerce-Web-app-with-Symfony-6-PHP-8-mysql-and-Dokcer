@@ -6,10 +6,14 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -105,5 +109,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CartItem::class, orphanRemoval: true)]
+    private Collection $cartItems;
+
+    public function __construct()
+    {
+        $this->cartItems = new ArrayCollection();
+    }
+
+    public function getCartItems(): Collection
+    {
+        return $this->cartItems;
     }
 }

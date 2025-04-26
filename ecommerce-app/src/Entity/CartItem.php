@@ -2,32 +2,30 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CartItemRepository;
-use App\Entity\User;
-use App\Entity\Product;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
 class CartItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+    #[ORM\Column]
+    private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(inversedBy: 'cartItems')]
     #[ORM\JoinColumn(nullable: false)]
-    private $user;
+    private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private $product;
+    private ?Product $product = null;
 
-    #[ORM\Column(type: 'integer')]
-    private $quantity;
+    #[ORM\Column]
+    private int $quantity = 1;
 
-    #[ORM\Column(type: 'float')]
-    private $price;
+    #[ORM\Column]
+    private float $priceAtTime = 0;
 
     public function getId(): ?int
     {
@@ -39,10 +37,9 @@ class CartItem
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -51,34 +48,31 @@ class CartItem
         return $this->product;
     }
 
-    public function setProduct(Product $product): self
+    public function setProduct(?Product $product): static
     {
         $this->product = $product;
-
         return $this;
     }
 
-    public function getQuantity(): ?int
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
 
-    public function setQuantity(int $quantity): self
+    public function setQuantity(int $quantity): static
     {
         $this->quantity = $quantity;
-
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function getPriceAtTime(): float
     {
-        return $this->price;
+        return $this->priceAtTime;
     }
 
-    public function setPrice(float $price): self
+    public function setPriceAtTime(float $price): static
     {
-        $this->price = $price;
-
+        $this->priceAtTime = $price;
         return $this;
     }
 }
