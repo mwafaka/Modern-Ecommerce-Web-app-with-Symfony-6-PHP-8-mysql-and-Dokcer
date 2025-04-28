@@ -118,6 +118,6 @@ composer create-project symfony/skeleton ecommerce-app
 cd ecommerce-app
 
 composer require webapp
-composer require doctrine orm maker security annotations twig
+composer require doctrine orm maker security twig
 
 ```
